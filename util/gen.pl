@@ -19,11 +19,5 @@ sub print_m
 	}
 }
 
-sub gen
-{
-	my ($c) = split '\s+', <>;
-	print_m split('\s+', <>) for 1..$c;
-}
-
-eval { gen };
-die 'bad format' if $@;
+my ($c) = split '\s+', <>;
+print_m split('\s+', <>) for 1..$c;

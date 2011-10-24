@@ -68,9 +68,8 @@ void solve(int t)
 {
 	int i, j, k;
 
-	long long max, sum, cur;
-	int min_sum, min_pos; 
-	int ans_l = -1, ans_r = -1;
+	long long min, max, sum, cur;
+	int min_i, max_l, max_r;
 
 	fill(t);
 
@@ -85,31 +84,33 @@ void solve(int t)
 
 			max = 0;
 			sum = 0;
-			min_sum = 0;
-			min_pos = 0;
+			min = 0;
+			max_l = -1;
+			max_r = -1;
+			min_i = -1;
 
 			for (i = 0; i < test[t].nr; ++i) {
 				sum += b[i];
-				cur = sum - min_sum;
+				cur = sum - min;
 
 				if (cur >= max) {
 					max = cur;
-					ans_l = min_pos + 1;
-					ans_r = i;
+					max_l = min_i + 1;
+					max_r = i;
 				}
 
-				if (sum < min_sum) {
-					min_sum = sum;
-					min_pos = i;
+				if (sum < min) {
+					min = sum;
+					min_i = i;
 				}
 			}
 
 			if (max >= ans[t].sum) {
 				ans[t].sum = max;
 
-				ans[t].r0 = ans_l;
+				ans[t].r0 = max_l;
 				ans[t].c0 = j;
-				ans[t].r1 = ans_r;
+				ans[t].r1 = max_r;
 				ans[t].c1 = k;
 			}
 		}

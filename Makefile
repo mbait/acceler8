@@ -20,9 +20,12 @@ retail:
 extreme:
 	CFLAGS="-O3 -fopenmp" $(MAKE) $(BUILD_PATH)_xtrm
 
-$(BUILD_PATH)%: $(SOURCE)
+# Compile sources into object file and save asm listing.
+$(BUILD_PATH)%.o: $(SOURCE)
+	$(CC) $(CFLAGS) -g -c -Wa,-a,-ad $< > $(@:.o=.lst) -o $@
+# Link object file and create executable.
+$(BUILD_PATH)% : $(BUILD_PATH)%.o
 	$(CC) $(CFLAGS) $< -o $@
-	$(CC) $(CFLAGS) -g -c -Wa,-a,-ad $< > $(@:=.lst)
 
 all: debug opt openmp retail extreme
 
@@ -32,4 +35,3 @@ clean:
 .SUFFIXES :
 
 .PHONY : clean
-

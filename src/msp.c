@@ -53,6 +53,9 @@ inline void fill(int t)
 
 	mean = ((long double)sum / (test[t].nr  * test[t].nc)) + 0.5;
 
+	#ifdef _OEPNMP
+	#pragma omp parallel for shared(j)
+	#endif
 	for (i = 0; i < test[t].nr; ++i) {
 		a[i][0] -= mean;
 

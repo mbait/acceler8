@@ -1,10 +1,11 @@
 /* Description: solution of the maximum subarray problem for two
  * dimensions. The solution employs Jay Kadane's algorithm which
- * has O(n^3) complexity. Optimzation techniques - OpenMP, SIMD.
+ * has O(n^3) complexity. Optimzation techniques - OpenMP.
  *
  * Author: Alexander Solovets <asolovets<at>gmail.com>
  */
 #include <stdio.h>
+#include <string.h>
 
 #define SQR(t) ((ans[t].r1 - ans[t].r0 + 1) * (ans[t].c1 - ans[t].c0 + 1))
 
@@ -53,9 +54,7 @@ inline void fill(int t)
 
 	mean = ((long double)sum / (test[t].nr  * test[t].nc)) + 0.5;
 
-	#ifdef _OEPNMP
-	#pragma omp parallel for shared(j)
-	#endif
+#pragma omp parallel for shared(j)
 	for (i = 0; i < test[t].nr; ++i) {
 		a[i][0] -= mean;
 
@@ -67,54 +66,59 @@ inline void fill(int t)
 void solve(int t)
 {
 	int i, j, k;
-
-	long long min, max, sum, cur;
 	int min_i, max_l, max_r;
+	long long min, max, sum, cur;
+	struct ans_s tans;
 
 	fill(t);
 
-	for (j = 0; j < test[t].nc; ++j) {
-		for (k = j; k < test[t].nc; ++k) {
-			for (i = 0; i < test[t].nr; ++i) {
-				b[i] = a[i][k];
+#pragma omp parallel for private(b, k, i, min_i, max_l, max_r, min, max, sum, cur)
+//#pragma omp parallel
+	//{
+//#pragma omp parallel for firstprivate(k) lastprivate(k) reduction(-: b)
+		for (j = 0; j < test[t].nc; ++j) {
+			for (k = j; k < test[t].nc; ++k) {
+				for (i = 0; i < test[t].nr; ++i) {
+					b[i] = a[i][k];
 
-				if (j > 0)
-					b[i] -= a[i][j - 1];
-			}
-
-			max = 0;
-			sum = 0;
-			min = 0;
-			max_l = -1;
-			max_r = -1;
-			min_i = -1;
-
-			for (i = 0; i < test[t].nr; ++i) {
-				sum += b[i];
-				cur = sum - min;
-
-				if (cur >= max) {
-					max = cur;
-					max_l = min_i + 1;
-					max_r = i;
+					if (j > 0)
+						b[i] -= a[i][j - 1];
 				}
 
-				if (sum < min) {
-					min = sum;
-					min_i = i;
+				max = 0;
+				sum = 0;
+				min = 0;
+				max_l = -1;
+				max_r = -1;
+				min_i = -1;
+
+				for (i = 0; i < test[t].nr; ++i) {
+					sum += b[i];
+					cur = sum - min;
+
+					if (cur >= max) {
+						max = cur;
+						max_l = min_i + 1;
+						max_r = i;
+					}
+
+					if (sum < min) {
+						min = sum;
+						min_i = i;
+					}
 				}
-			}
 
-			if (max >= ans[t].sum) {
-				ans[t].sum = max;
-
-				ans[t].r0 = max_l;
-				ans[t].c0 = j;
-				ans[t].r1 = max_r;
-				ans[t].c1 = k;
+#pragma omp critical (ans)
+				if (max >= ans[t].sum) {
+					ans[t].sum = max;
+					ans[t].r0 = max_l;
+					ans[t].c0 = j;
+					ans[t].r1 = max_r;
+					ans[t].c1 = k;
+				}
 			}
 		}
-	}
+//	}
 }
 
 int main(int argc, char **argv)

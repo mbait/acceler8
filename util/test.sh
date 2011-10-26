@@ -8,5 +8,5 @@ echo 'real user system cells'
 
 for f in test/*.in
 do
-	(time $1 $f ans > /dev/null) 2>&1 | tail -n+2 | perl util/check.pl $f
+	(time $1 $f ans > /dev/null) 2>&1 | tail -n+2 | perl util/time.pl $f
 done

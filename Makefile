@@ -29,6 +29,7 @@ default :
 
 # Compile sources into object file and save asm listing.
 $(BUILD_PATH)%.o : $(SOURCE)
+	test -d $(BUILD_DIR) || mkdir $(BUILD_DIR)
 	$(CC) $(CFLAGS) -g -c -Wa,-a,-ad $< > $(@:.o=.lst) -o $@
 # Link object file and create executable.
 $(BUILD_PATH)% : $(BUILD_PATH)%.o

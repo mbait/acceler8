@@ -1,0 +1,20 @@
+Maximum sub-matrix problem solution for the Intel Acceler8 2011 contest
+=======================================================================
+
+=== BUILDING ===
+The solution can be easily built using `make' command. There are several
+targets for building, among which only two particular are interesting.  The
+first is 'retail' which actually is the one you need to run against the test
+cases. Another one is 'optimized' which is pretty similar to 'retail' but has
+no any parallelization inside. Thus if you are going to test my solution just
+run `make retail' and then use created 'out/msp_rtl'.
+
+=== RUNNING ===
+According to the contest rules the program takes two command-line arguments:
+input file name and output file name. If there is not enough arguments the
+program will exit with the status code '1'.
+
+=== UTILITIES ===
+The distribution archive includes some utils for test automation and
+perfomance analysis. Also there is a script generating report, it requires
+`gnuplot'.

@@ -10,7 +10,7 @@ die()
 WD=${DIST_DIR:-$PWD}
 
 [ "$#" -eq 1 ]  && test -x $1 || die 'usage: sh test.sh <executable>'
-test -d test/out || mkdir $WD/test/out
+test -d $WD/test/out || mkdir $WD/test/out
 
 echo 'cells real user system'
 

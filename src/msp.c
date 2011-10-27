@@ -60,11 +60,13 @@ inline void gen(int t)
 		}
 	}
 
-	/* This chunk is taken from official jury code. */
+	/* This chunk is taken from the official jury code. */
+	///////////////////////////////////////////////////////////////////////////
 	mean = sum / m_size;
 	rem = sum - mean * m_size;
 	mean += (rem * 2 > m_size) ? (1) : (0);
 	mean -= (rem * 2 < -m_size) ? (1) : (0);
+	///////////////////////////////////////////////////////////////////////////
 
 	for (i = 1; i <= test[t].nr; ++i) {
 		#pragma omp parallel for

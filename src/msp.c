@@ -78,12 +78,12 @@ inline void gen(int t)
 
 void solve(int t)
 {
-	int i, j, k;
-	int min_i, max_l, max_r;
-	long long min, max, sum, cur;
-
 	#pragma omp parallel
 	{
+		int i, j, k;
+		int min_i, max_l, max_r;
+		long long min, max, sum, cur;
+
 #ifdef _OPENMP
 		size_t tid = omp_get_thread_num();
 		struct ans_s tans = { -1 };
@@ -91,7 +91,7 @@ void solve(int t)
 		static size_t tid=0;
 #endif
 
-		#pragma omp for private(j, k, min_i, max_l, max_r, min, max, sum, cur)
+		#pragma omp for nowait
 		for (i = 1; i <= test[t].nr; ++i) {
 			for (j = i; j <= test[t].nr; ++j) {
 				max = 0;

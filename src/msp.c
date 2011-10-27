@@ -5,14 +5,8 @@
  * Author: Alexander Solovets <asolovets<at>gmail.com>
  */
 #include <stdio.h>
-#include <string.h>
 
-#ifndef _OPENMP
-static int omp_get_thread_num()
-{
-	return 0;
-}
-#else
+#ifdef _OPENMP
 #include <omp.h>
 #endif
 
@@ -87,11 +81,15 @@ void solve(int t)
 	int i, j, k;
 	int min_i, max_l, max_r;
 	long long min, max, sum, cur;
-	size_t tid;
 
-	#pragma omp parallel private(tid)
+	#pragma omp parallel
 	{
-		tid = omp_get_thread_num();
+#ifdef _OPENMP
+		size_t tid = omp_get_thread_num();
+		struct ans_s tans = { -1 };
+#else
+		static size_t tid=0;
+#endif
 
 		#pragma omp for private(j, k, min_i, max_l, max_r, min, max, sum, cur)
 		for (i = 1; i <= test[t].nr; ++i) {
@@ -121,19 +119,37 @@ void solve(int t)
 						min_i = k;
 					}
 				}
-
-				#pragma omp critical(ans)
-				{
-					if (max >= ans[t].sum) {
-						ans[t].sum = max;
-						ans[t].r0 = i - 1;
-						ans[t].c0 = max_l;
-						ans[t].r1 = j - 1;
-						ans[t].c1 = max_r;
-					}
+#ifdef _OPENMP
+				if (max >= tans.sum) {
+					tans.sum = max;
+					tans.r0 = i - 1;
+					tans.c0 = max_l;
+					tans.r1 = j - 1;
+					tans.c1 = max_r;
 				}
+#else
+				if (max >= ans[t].sum) {
+					ans[t].sum = max;
+					ans[t].r0 = i - 1;
+					ans[t].c0 = max_l;
+					ans[t].r1 = j - 1;
+					ans[t].c1 = max_r;
+				}
+#endif
 			}
 		}
+#ifdef _OPENMP
+		#pragma omp critical(ans)
+		{
+			if (tans.sum >= ans[t].sum) {
+				ans[t].sum = tans.sum;
+				ans[t].r0 = tans.r0;
+				ans[t].c0 = tans.c0;
+				ans[t].r1 = tans.r1;
+				ans[t].c1 = tans.c1;
+			}
+		}
+#endif
 	}
 }
 

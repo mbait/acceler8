@@ -37,7 +37,7 @@ struct ans_s {
 };
 
 
-int a[MAX_N][MAX_N + 1];
+int a[MAX_N + 1][MAX_N];
 int b[THREAD_NUM][MAX_N];
 
 struct test_s test[MAX_T];
@@ -55,8 +55,8 @@ inline void gen(int t)
 	int seed = test[t].seed;
 	long long sum = 0;
 
-	for (i = 0; i < test[t].nr; ++i) {
-		for (j = 1; j <= test[t].nc; ++j) {
+	for (i = 1; i <= test[t].nr; ++i) {
+		for (j = 0; j < test[t].nc; ++j) {
 			seed = rand(seed, t);
 			a[i][j] = seed;
 			sum += seed;
@@ -65,16 +65,16 @@ inline void gen(int t)
 
 	mean = ((long double)sum / (test[t].nr  * test[t].nc)) + 0.5;
 
-	#pragma omp parallel for private(j)
-	for (i = 0; i < test[t].nr; ++i) {
-		for (j = 1; j <= test[t].nc; ++j)
-			a[i][j] += a[i][j - 1] - mean;
+	for (i = 1; i <= test[t].nr; ++i) {
+		#pragma omp parallel for
+		for (j = 0; j < test[t].nc; ++j)
+			a[i][j] += a[i - 1][j] - mean;
 	}
 
 #ifdef DEBUG
 	// Print accumulated matrix.
-	for (i = 0; i < test[t].nr; ++i) {
-		for (j = 1; j <= test[t].nc; ++j)
+	for (i = 1; i <= test[t].nr; ++i) {
+		for (j = 0; j < test[t].nc; ++j)
 			fprintf(stderr, "%3d", a[i][j]);
 
 		fputc('\n', stderr);
@@ -93,13 +93,9 @@ void solve(int t)
 	{
 		tid = omp_get_thread_num();
 
-		#pragma omp for private(i, k, min_i, max_l, max_r, min, max, sum, cur)
-		for (j = 1; j <= test[t].nc; ++j) {
-			for (k = j; k <= test[t].nc; ++k) {
-				for (i = 0; i < test[t].nr; ++i) {
-					b[tid][i] = a[i][k] - a[i][j - 1];
-				}
-
+		#pragma omp for private(j, k, min_i, max_l, max_r, min, max, sum, cur)
+		for (i = 1; i <= test[t].nr; ++i) {
+			for (j = i; j <= test[t].nr; ++j) {
 				max = 0;
 				sum = 0;
 				min = 0;
@@ -107,19 +103,22 @@ void solve(int t)
 				max_r = -1;
 				min_i = -1;
 
-				for (i = 0; i < test[t].nr; ++i) {
-					sum += b[tid][i];
+				for (k = 0; k < test[t].nc; ++k)
+					b[tid][k] = a[j][k] - a[i - 1][k];
+
+				for (k = 0; k < test[t].nc; ++k) {
+					sum += b[tid][k];
 					cur = sum - min;
 
 					if (cur >= max) {
 						max = cur;
 						max_l = min_i + 1;
-						max_r = i;
+						max_r = k;
 					}
 
 					if (sum < min) {
 						min = sum;
-						min_i = i;
+						min_i = k;
 					}
 				}
 
@@ -127,10 +126,10 @@ void solve(int t)
 				{
 					if (max >= ans[t].sum) {
 						ans[t].sum = max;
-						ans[t].r0 = max_l;
-						ans[t].c0 = j - 1;
-						ans[t].r1 = max_r;
-						ans[t].c1 = k - 1;
+						ans[t].r0 = i - 1;
+						ans[t].c0 = max_l;
+						ans[t].r1 = j - 1;
+						ans[t].c1 = max_r;
 					}
 				}
 			}

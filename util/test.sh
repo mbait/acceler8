@@ -4,7 +4,7 @@ set -e
 test -x $1 || (echo 'usage: sh test.sh <executable>' && exit 1)
 test -d test/out || mkdir test/out
 
-echo 'real user system cells'
+echo 'cells real user system'
 
 for f in test/*.in
 do

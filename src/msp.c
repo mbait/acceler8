@@ -25,6 +25,8 @@ struct test_s {
 	int a, b, m;
 };
 
+/* Don't know why, but 'long long' works faster then 'int'
+ * even on 32-bit platform. Can only guess alignment issues. */
 struct ans_s {
 	long long sum;
 	int r0, c0, r1, c1;
@@ -45,9 +47,10 @@ inline int rand(int seed, int i)
 inline void gen(int t)
 {
 	int i, j;
-	int mean;
+	int sum = 0;
+	int mean, rem;
 	int seed = test[t].seed;
-	long long sum = 0;
+	int m_size = test[t].nr * test[t].nc;
 
 	for (i = 1; i <= test[t].nr; ++i) {
 		for (j = 0; j < test[t].nc; ++j) {
@@ -57,7 +60,11 @@ inline void gen(int t)
 		}
 	}
 
-	mean = ((long double)sum / (test[t].nr  * test[t].nc)) + 0.5;
+	/* This chunk is taken from official jury code. */
+	mean = sum / m_size;
+	rem = sum - mean * m_size;
+	mean += (rem * 2 > m_size) ? (1) : (0);
+	mean -= (rem * 2 < -m_size) ? (1) : (0);
 
 	for (i = 1; i <= test[t].nr; ++i) {
 		#pragma omp parallel for

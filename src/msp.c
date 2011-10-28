@@ -1,6 +1,6 @@
 /* Description: solution of the maximum subarray problem for two
  * dimensions. The solution employs Jay Kadane's algorithm which
- * has O(n*m^2) complexity. Parallelization technique - OpenMP.
+ * has O(m*n^2) complexity. Parallelization technique - OpenMP.
  *
  * Author: Alexander Solovets <asolovets<at>gmail.com>
  */

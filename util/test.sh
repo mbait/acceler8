@@ -7,11 +7,11 @@ die()
 	exit 1
 }
 
-WD=${DIST_DIR:-$PWD}
 PID=${PID:-$$}
+WD=${DIST_DIR:-$PWD}
 OUT_DIR=$WD/test/out.$PID
 
-[ "$#" -eq 1 ]  && test -x $1 || die 'usage: sh test.sh <executable>'
+[ "$#" -eq 1 ] && test -f $1 && test -x $1 || die 'usage: sh test.sh <executable>'
 test -d $OUT_DIR || mkdir $OUT_DIR
 
 echo 'cells real user system'

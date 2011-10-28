@@ -26,12 +26,15 @@ struct test_s {
 };
 
 /* Don't know why, but 'long long' works faster then 'int'
- * even on 32-bit platform. Can only guess alignment issues. */
+ * even on 32-bit platform. Can only suggest alignment issues. */
 struct ans_s {
 	long long sum;
 	int r0, c0, r1, c1;
 };
 
+#ifdef _OPENMP
+size_t num_threads;
+#endif
 
 int a[MAX_N + 1][MAX_N];
 int b[THREAD_NUM][MAX_N];
@@ -87,11 +90,13 @@ inline void gen(int t)
 
 void solve(int t)
 {
-	#pragma omp parallel
+	#pragma omp parallel if(test[t].nr > 1)
 	{
 		int i, j, k;
+		/*
 		int min_i, max_l, max_r;
 		long long min, max, sum, cur;
+		*/
 
 #ifdef _OPENMP
 		size_t tid = omp_get_thread_num();
@@ -103,12 +108,13 @@ void solve(int t)
 		#pragma omp for nowait
 		for (i = 1; i <= test[t].nr; ++i) {
 			for (j = i; j <= test[t].nr; ++j) {
-				max = 0;
-				sum = 0;
-				min = 0;
-				max_l = -1;
-				max_r = -1;
-				min_i = -1;
+				int cur;
+				int max = 0;
+				int sum = 0;
+				int min = 0;
+				int max_l = -1;
+				int max_r = -1;
+				int min_i = -1;
 
 				for (k = 0; k < test[t].nc; ++k)
 					b[tid][k] = a[j][k] - a[i - 1][k];
@@ -169,6 +175,10 @@ int main(int argc, char **argv)
 
 	if (argc < 3)
 		return 1;
+
+#ifdef _OPENMP
+	num_threads = omp_get_num_procs();
+#endif
 
 	f = fopen(argv[1], "r");
 	fscanf(f, "%d", &tn);

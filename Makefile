@@ -52,12 +52,12 @@ batch:
 	   LD_LIBRARY_PATH=/opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib \
 	   $(MAKE) clean all
 	$(RM) -r ${PID_FILE}
-	./sched 1 >> ${PID_FILE}
-	./sched 4 >> ${PID_FILE}
-	./sched 8 >> ${PID_FILE}
-	./sched 16 >> ${PID_FILE}
-	./sched 35 >> ${PID_FILE}
-	./sched 40 >> ${PID_FILE}
+	./sched.sh 1 >> ${PID_FILE}
+	./sched.sh 4 >> ${PID_FILE}
+	./sched.sh 8 >> ${PID_FILE}
+	./sched.sh 16 >> ${PID_FILE}
+	./sched.sh 35 >> ${PID_FILE}
+	./sched.sh 40 >> ${PID_FILE}
 	cat ${PID_FILE}
 
 doc:

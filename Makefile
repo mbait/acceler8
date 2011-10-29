@@ -19,10 +19,13 @@ openmp :
 	CFLAGS="-fopenmp" $(MAKE) $(BUILD_PATH)_omp
 
 retail :
-	CFLAGS="-fopenmp -O2 -mssse3" $(MAKE) $(BUILD_PATH)_rtl
+	CFLAGS="-fopenmp -O2" $(MAKE) $(BUILD_PATH)_rtl
 
 extreme :
 	CFLAGS="-fopenmp -O3 -mssse3" $(MAKE) $(BUILD_PATH)_xtm
+
+vector:
+	CFLAGS="-fopenmp -O2 -mssse3" $(MAKE) $(BUILD_PATH)_vec
 
 default :
 	$(MAKE) $(BUILD_PATH)_nop
@@ -35,7 +38,7 @@ $(BUILD_PATH)%.o : $(SOURCE)
 $(BUILD_PATH)% : $(BUILD_PATH)%.o
 	$(CC) $(CFLAGS) $< -o $@
 
-all : debug optimized openmp retail extreme simd default
+all : debug optimized openmp retail extreme simd default vector
 
 clean:
 	$(RM) $(BUILD_DIR)/*

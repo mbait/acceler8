@@ -1,4 +1,5 @@
 NAME=msp
+PID_FILE=batch.pid
 BUILD_DIR=out
 BUILD_PATH=$(BUILD_DIR)/$(NAME)
 DISR_NAME=Acceler8-Alexander_Solovets
@@ -45,6 +46,19 @@ clean:
 
 dist: retail doc
 	git archive --prefix=$(DISR_NAME)/ HEAD | gzip > $(DISR_NAME).tgz
+
+batch:
+	CC=/opt/gcc/4.5.1/bin/gcc \
+	   LD_LIBRARY_PATH=/opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib \
+	   $(MAKE) clean all
+	$(RM) -r ${PID_FILE}
+	./sched 1 >> ${PID_FILE}
+	./sched 4 >> ${PID_FILE}
+	./sched 8 >> ${PID_FILE}
+	./sched 16 >> ${PID_FILE}
+	./sched 35 >> ${PID_FILE}
+	./sched 40 >> ${PID_FILE}
+	cat ${PID_FILE}
 
 doc:
 

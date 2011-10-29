@@ -14,8 +14,6 @@ OUT_DIR=$WD/test/out.$PID
 [ "$#" -eq 1 ] && test -f $1 && test -x $1 || die 'usage: sh test.sh <executable>'
 test -d $OUT_DIR || mkdir $OUT_DIR
 
-echo 'cells real user system'
-
 for f in $WD/test/*.in
 do
 	ans=$OUT_DIR/$(echo $f | sed 's/.in$/.ans/' | xargs basename)

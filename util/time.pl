@@ -12,7 +12,7 @@ my $s = 0;
 
 while (<T>) {
 	/(\d+)\s+(\d+)/ or die 'invalid test format';
-	$s += $1 * $2;
+	$s += $1 ** 2 * $2;
 }
 
 close T or die $!;

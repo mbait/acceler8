@@ -37,7 +37,6 @@ size_t num_threads;
 #endif
 
 int a[MAX_N + 1][MAX_N];
-int b[THREAD_NUM][MAX_N];
 
 struct test_s test[MAX_T];
 struct ans_s ans[MAX_T];
@@ -99,7 +98,7 @@ void solve(int t)
 		*/
 
 #ifdef _OPENMP
-		size_t tid = omp_get_thread_num();
+		//size_t tid = omp_get_thread_num();
 		struct ans_s tans = { -1 };
 #else
 		static size_t tid=0;
@@ -116,11 +115,8 @@ void solve(int t)
 				int max_r = -1;
 				int min_i = -1;
 
-				for (k = 0; k < test[t].nc; ++k)
-					b[tid][k] = a[j][k] - a[i - 1][k];
-
 				for (k = 0; k < test[t].nc; ++k) {
-					sum += b[tid][k];
+					sum += a[j][k] - a[i - 1][k];
 					cur = sum - min;
 
 					if (cur >= max) {

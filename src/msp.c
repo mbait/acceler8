@@ -71,7 +71,7 @@ inline void gen(int t)
 	///////////////////////////////////////////////////////////////////////////
 
 	for (i = 1; i <= test[t].nr; ++i) {
-		#pragma omp parallel for
+		//#pragma omp parallel for
 		for (j = 0; j < test[t].nc; ++j)
 			a[i][j] += a[i - 1][j] - mean;
 	}
@@ -89,6 +89,9 @@ inline void gen(int t)
 
 void solve(int t)
 {
+	size_t nr = test[t].nr;
+	size_t nc = test[t].nc;
+
 	#pragma omp parallel if(test[t].nr > 1)
 	{
 		int i, j, k;
@@ -105,8 +108,8 @@ void solve(int t)
 #endif
 
 		#pragma omp for nowait
-		for (i = 1; i <= test[t].nr; ++i) {
-			for (j = i; j <= test[t].nr; ++j) {
+		for (i = 1; i <= nr; ++i) {
+			for (j = i; j <= nr; ++j) {
 				int cur;
 				int max = 0;
 				int sum = 0;
@@ -115,7 +118,7 @@ void solve(int t)
 				int max_r = -1;
 				int min_i = -1;
 
-				for (k = 0; k < test[t].nc; ++k) {
+				for (k = 0; k < nc; ++k) {
 					sum += a[j][k] - a[i - 1][k];
 					cur = sum - min;
 

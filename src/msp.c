@@ -94,76 +94,50 @@ void solve(int t)
 
 	#pragma omp parallel if(test[t].nr > 1)
 	{
-		int i, j, k;
-		/*
-		int min_i, max_l, max_r;
-		long long min, max, sum, cur;
-		*/
-
-#ifdef _OPENMP
-		//size_t tid = omp_get_thread_num();
-		struct ans_s tans = { -1 };
-#else
-		static size_t tid=0;
-#endif
+		int i, j;
 
 		#pragma omp for nowait
 		for (i = 1; i <= nr; ++i) {
 			for (j = i; j <= nr; ++j) {
-				int cur;
-				int max = 0;
-				int sum = 0;
-				int min = 0;
-				int max_l = -1;
-				int max_r = -1;
-				int min_i = -1;
+				#pragma omp task shared(nc)
+				{
+					int k;
+					int cur;
+					int max = 0;
+					int sum = 0;
+					int min = 0;
+					int max_l = -1;
+					int max_r = -1;
+					int min_i = -1;
 
-				for (k = 0; k < nc; ++k) {
-					sum += a[j][k] - a[i - 1][k];
-					cur = sum - min;
+					for (k = 0; k < nc; ++k) {
+						sum += a[j][k] - a[i - 1][k];
+						cur = sum - min;
 
-					if (cur >= max) {
-						max = cur;
-						max_l = min_i + 1;
-						max_r = k;
+						if (cur >= max) {
+							max = cur;
+							max_l = min_i + 1;
+							max_r = k;
+						}
+
+						if (sum < min) {
+							min = sum;
+							min_i = k;
+						}
 					}
-
-					if (sum < min) {
-						min = sum;
-						min_i = k;
+					#pragma omp critical(ans)
+					{
+						if (ans[t].sum <= max) {
+							ans[t].sum = max;
+							ans[t].r0 = i - 1;
+							ans[t].c0 = max_l;
+							ans[t].r1 = j - 1;
+							ans[t].c1 = max_r;
+						}
 					}
 				}
-#ifdef _OPENMP
-				if (max >= tans.sum) {
-					tans.sum = max;
-					tans.r0 = i - 1;
-					tans.c0 = max_l;
-					tans.r1 = j - 1;
-					tans.c1 = max_r;
-				}
-#else
-				if (max >= ans[t].sum) {
-					ans[t].sum = max;
-					ans[t].r0 = i - 1;
-					ans[t].c0 = max_l;
-					ans[t].r1 = j - 1;
-					ans[t].c1 = max_r;
-				}
-#endif
 			}
 		}
-#ifdef _OPENMP
-		#pragma omp critical(ans)
-		{
-			if (tans.sum >= ans[t].sum) {
-				ans[t].sum = tans.sum;
-				ans[t].r0 = tans.r0;
-				ans[t].c0 = tans.c0;
-				ans[t].r1 = tans.r1;
-				ans[t].c1 = tans.c1;
-			}
-		}
-#endif
 	}
 }
 

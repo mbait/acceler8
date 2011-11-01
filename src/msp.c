@@ -107,7 +107,7 @@ void solve(int t)
 		static size_t tid=0;
 #endif
 
-		#pragma omp for nowait
+		#pragma omp for nowait schedule(dynamic, 20)
 		for (i = 1; i <= nr; ++i) {
 			for (j = i; j <= nr; ++j) {
 				int cur;

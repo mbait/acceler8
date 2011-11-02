@@ -40,6 +40,7 @@ int a[MAX_N + 1][MAX_N];
 
 struct test_s test[MAX_T];
 struct ans_s ans[MAX_T];
+struct ans_s ttans[THREAD_NUM];
 
 inline int rand(int seed, int i)
 {
@@ -89,8 +90,15 @@ inline void gen(int t)
 
 void solve(int t)
 {
-	size_t nr = test[t].nr;
-	size_t nc = test[t].nc;
+	int i;
+
+	int nr = test[t].nr;
+	int nc = test[t].nc;
+
+#ifdef _OPENMP
+	for (i = 0; i < THREAD_NUM; ++i)
+		ttans[i].sum = -1;
+#endif
 
 	#pragma omp parallel if(test[t].nr > 1)
 	{
@@ -101,10 +109,10 @@ void solve(int t)
 		*/
 
 #ifdef _OPENMP
-		//size_t tid = omp_get_thread_num();
-		struct ans_s tans = { -1 };
+		size_t tid = omp_get_thread_num();
+		//struct ans_s tans = { -1 };
 #else
-		static size_t tid=0;
+		//static size_t tid=0;
 #endif
 
 		#pragma omp for nowait schedule(dynamic, 20)
@@ -134,12 +142,21 @@ void solve(int t)
 					}
 				}
 #ifdef _OPENMP
+				/*
 				if (max >= tans.sum) {
 					tans.sum = max;
 					tans.r0 = i - 1;
 					tans.c0 = max_l;
 					tans.r1 = j - 1;
 					tans.c1 = max_r;
+				}
+				*/
+				if (max >= ttans[tid].sum) {
+					ttans[tid].sum = max;
+					ttans[tid].r0 = i - 1;
+					ttans[tid].c0 = max_l;
+					ttans[tid].r1 = j - 1;
+					ttans[tid].c1 = max_r;
 				}
 #else
 				if (max >= ans[t].sum) {
@@ -153,6 +170,7 @@ void solve(int t)
 			}
 		}
 #ifdef _OPENMP
+		/*
 		#pragma omp critical(ans)
 		{
 			if (tans.sum >= ans[t].sum) {
@@ -163,8 +181,21 @@ void solve(int t)
 				ans[t].c1 = tans.c1;
 			}
 		}
+		*/
 #endif
 	}
+
+#ifdef _OPENMP
+	for (i = 0; i < omp_get_num_threads(); ++i) {
+		if (ttans[i].sum > ans[t].sum) {
+			ans[t].sum = ttans[i].sum;
+			ans[t].r0 = ttans[i].r0;
+			ans[t].c0 = ttans[i].c0;
+			ans[t].r1 = ttans[i].r1;
+			ans[t].c1 = ttans[i].c1;
+		}
+	}
+#endif
 }
 
 int main(int argc, char **argv)

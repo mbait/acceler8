@@ -91,7 +91,6 @@ inline void gen(int t)
 void solve(int t)
 {
 	int i;
-
 	int nr = test[t].nr;
 	int nc = test[t].nc;
 
@@ -102,14 +101,15 @@ void solve(int t)
 
 	#pragma omp parallel if(test[t].nr > 1)
 	{
-		int i, j, k;
+		int j, k;
+		size_t tid;
 		/*
 		int min_i, max_l, max_r;
 		long long min, max, sum, cur;
 		*/
 
 #ifdef _OPENMP
-		size_t tid = omp_get_thread_num();
+		//size_t tid = omp_get_thread_num();
 		//struct ans_s tans = { -1 };
 #else
 		//static size_t tid=0;
@@ -125,7 +125,7 @@ void solve(int t)
 				int max_l = -1;
 				int max_r = -1;
 				int min_i = -1;
-
+				
 				for (k = 0; k < nc; ++k) {
 					sum += a[j][k] - a[i - 1][k];
 					cur = sum - min;
@@ -151,6 +151,8 @@ void solve(int t)
 					tans.c1 = max_r;
 				}
 				*/
+				tid = omp_get_thread_num();
+
 				if (max >= ttans[tid].sum) {
 					ttans[tid].sum = max;
 					ttans[tid].r0 = i - 1;
@@ -186,15 +188,18 @@ void solve(int t)
 	}
 
 #ifdef _OPENMP
-	for (i = 0; i < omp_get_num_threads(); ++i) {
-		if (ttans[i].sum > ans[t].sum) {
-			ans[t].sum = ttans[i].sum;
-			ans[t].r0 = ttans[i].r0;
-			ans[t].c0 = ttans[i].c0;
-			ans[t].r1 = ttans[i].r1;
-			ans[t].c1 = ttans[i].c1;
-		}
+	nr = 0;
+
+	for (i = 1; i < THREAD_NUM; ++i) {
+		if (ttans[i].sum > ans[t].sum)
+			nr = i;
 	}
+
+	ans[t].sum = ttans[nr].sum;
+	ans[t].r0 = ttans[nr].r0;
+	ans[t].c0 = ttans[nr].c0;
+	ans[t].r1 = ttans[nr].r1;
+	ans[t].c1 = ttans[nr].c1;
 #endif
 }
 

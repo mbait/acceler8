@@ -32,13 +32,15 @@ struct ans_s ttans[THREAD_NUM];
 
 size_t nr, nc;
 int seed, a, b, m;
+int sum;
 
 inline void gen(void)
 {
 	int i, j;
-	int sum = 0;
 	int mean, rem;
 	int m_size = nr * nc;
+
+	sum = 0;
 
 	for (i = 1; i <= nr; ++i) {
 		for (j = 0; j < nc; ++j) {
@@ -47,7 +49,6 @@ inline void gen(void)
 		}
 	}
 
-	#pragma omp parallel for reduction(+:sum)
 	for (j = 0; j < nc; ++j)
 		sum += mat[nr][j];
 
@@ -79,14 +80,14 @@ void solve(void)
 {
 	int i;
 
-	gen();
-
 #ifdef _OPENMP
 	for (i = 0; i < THREAD_NUM; ++i)
 		ttans[i].sum = -1;
 #else
 	ans.sum = -1;
 #endif
+
+	gen();
 
 	#pragma omp parallel if(nr > 1)
 	{
@@ -108,7 +109,7 @@ void solve(void)
 					sum += mat[j][k] - mat[i - 1][k];
 					cur = sum - min;
 
-					if (cur >= max) {
+					if (cur > max) {
 						max = cur;
 						max_l = min_i + 1;
 						max_r = k;
@@ -122,7 +123,7 @@ void solve(void)
 #ifdef _OPENMP
 				tid = omp_get_thread_num();
 
-				if (max >= ttans[tid].sum) {
+				if (max > ttans[tid].sum) {
 					ttans[tid].sum = max;
 					ttans[tid].r0 = i - 1;
 					ttans[tid].c0 = max_l;
@@ -130,7 +131,7 @@ void solve(void)
 					ttans[tid].c1 = max_r;
 				}
 #else
-				if (max >= ans.sum) {
+				if (max > ans.sum) {
 					ans.sum = max;
 					ans.r0 = i - 1;
 					ans.c0 = max_l;

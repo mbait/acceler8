@@ -19,8 +19,6 @@
 #define THREAD_NUM	100
 
 
-/* Don't know why, but 'long long' works faster then 'int'
- * even on 32-bit platform. Can only suggest alignment issues. */
 struct ans_s {
 	int sum;
 	short int r0, c0, r1, c1;
@@ -45,10 +43,13 @@ inline void gen(void)
 	for (i = 1; i <= nr; ++i) {
 		for (j = 0; j < nc; ++j) {
 			seed = (seed * a + b) % m;
-			mat[i][j] = seed;
-			sum += seed;
+			mat[i][j] = mat[i - 1][j] + seed;
 		}
 	}
+
+	#pragma omp parallel for reduction(+:sum)
+	for (j = 0; j < nc; ++j)
+		sum += mat[nr][j];
 
 	/* This chunk is taken from the official jury code. */
 	///////////////////////////////////////////////////////////////////////////
@@ -59,9 +60,8 @@ inline void gen(void)
 	///////////////////////////////////////////////////////////////////////////
 
 	for (i = 1; i <= nr; ++i) {
-		//#pragma omp parallel for
 		for (j = 0; j < nc; ++j)
-			mat[i][j] += mat[i - 1][j] - mean;
+			mat[i][j] -= mean * i;
 	}
 
 #ifdef DEBUG

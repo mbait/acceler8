@@ -29,7 +29,7 @@ struct test_s {
  * even on 32-bit platform. Can only suggest alignment issues. */
 struct ans_s {
 	long long sum;
-	int r0, c0, r1, c1;
+	short int r0, c0, r1, c1;
 };
 
 #ifdef _OPENMP

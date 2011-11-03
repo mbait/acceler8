@@ -22,7 +22,7 @@
 /* Don't know why, but 'long long' works faster then 'int'
  * even on 32-bit platform. Can only suggest alignment issues. */
 struct ans_s {
-	long long sum;
+	int sum;
 	short int r0, c0, r1, c1;
 };
 
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
 		fscanf(fin, "%d%d", &nr, &nc);
 		fscanf(fin, "%d%d%d%d", &seed, &a, &b, &m);
 		solve();
-		fprintf(fout, "Case #%d: %d %d %d %d %lld %d\n",
+		fprintf(fout, "Case #%d: %d %d %d %d %d %d\n",
 				t + 1, ans.r0, ans.c0, ans.r1, ans.c1, ans.sum, SQR(ans));
 	}
 

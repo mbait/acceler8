@@ -191,7 +191,7 @@ void solve(int t)
 	nr = 0;
 
 	for (i = 1; i < THREAD_NUM; ++i) {
-		if (ttans[i].sum > ans[t].sum)
+		if (ttans[i].sum > ttans[nr].sum)
 			nr = i;
 	}
 

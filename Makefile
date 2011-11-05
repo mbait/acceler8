@@ -43,7 +43,7 @@ $(BUILD_PATH)%.o : $(SOURCE)
 
 # Link object file and create executable.
 $(BUILD_PATH)% : $(BUILD_PATH)%.o
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -L$(LD_LIBRARY_PATH) $< -o $@
 
 all : debug optimized openmp retail extreme simd default vector
 

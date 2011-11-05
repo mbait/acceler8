@@ -43,12 +43,12 @@ $(BUILD_PATH)%.o : $(SOURCE)
 
 # Link object file and create executable.
 $(BUILD_PATH)% : $(BUILD_PATH)%.o
-	$(CC) $(CFLAGS) -L$(LD_LIBRARY_PATH) $< -o $@
+	$(CC) $(CFLAGS) -L$(LIBRARY_PATH) $< -o $@
 
 all : debug optimized openmp retail extreme simd default vector
 
 all-mtl : CC = /opt/gcc/4.5.1/bin/gcc
-all-mtl : LD_LIBRARY_PATH = /opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib
+all-mtl : LIBRARY_PATH = /opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib
 all-mtl : all
 
 clean: doc-clean

@@ -1,3 +1,5 @@
+REMOTE_HOST=mtl
+
 SCHEDULE=./sched.sh
 
 NAME=msp
@@ -5,6 +7,7 @@ PID_FILE=batch.pid
 BUILD_DIR=out
 BUILD_PATH=$(BUILD_DIR)/$(NAME)
 DIST_NAME=acceler8
+DIST_ARCH=$(DIST_NAME).tgz
 SOLUTION_NAME=Acceler8-Alexander_Solovets
 
 SOURCE=src/$(NAME).c
@@ -44,11 +47,19 @@ $(BUILD_PATH)% : $(BUILD_PATH)%.o
 
 all : debug optimized openmp retail extreme simd default vector
 
+all-mtl : CC = /opt/gcc/4.5.1/bin/gcc
+all-mtl : LD_LIBRARY_PATH = /opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib
+all-mtl : all
+
 clean: doc-clean
 	$(RM) $(BUILD_DIR)/*
 
 dist:
-	git archive --prefix=$(DIST_NAME)/ HEAD | gzip > $(DIST_NAME).tgz
+	git archive --prefix=$(DIST_NAME)/ HEAD | gzip > $(DIST_ARCH)
+
+dist-copy: dist
+	scp $(DIST_ARCH) $(REMOTE_HOST):~mbait
+	ssh $(REMOTE_HOST) 'tar zxf $(DIST_ARCH) && rm $(DIST_ARCH)'
 
 solution: doc
 	$(TAR) --transform 's,^,${SOLUTION_NAME}/,S' -zcf ${SOLUTION_NAME}.tgz \
@@ -56,10 +67,7 @@ solution: doc
 		src/msp.c \
 		doc/out/report.html
 
-batch:
-	CC=/opt/gcc/4.5.1/bin/gcc \
-	   LD_LIBRARY_PATH=/opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib \
-	   $(MAKE) clean all
+batch: all-mtl
 	$(RM) -r ${PID_FILE}
 	$(SCHEDULE) 1 >> ${PID_FILE}
 	$(SCHEDULE) 4 >> ${PID_FILE}

@@ -39,11 +39,11 @@ default : $(BUILD_PATH)_nop
 # Compile sources into object file and save asm listing.
 $(BUILD_PATH)%.o : $(SOURCE)
 	test -d $(BUILD_DIR) || mkdir $(BUILD_DIR)
-	$(CC) $(CFLAGS) -g -c -Wa,-a,-ad $< > $(@:.o=.lst) -o $@
+	LD_LIBRARY_PATH=$(LIBRARY_PATH) $(CC) $(CFLAGS) -g -c -Wa,-a,-ad $< > $(@:.o=.lst) -o $@
 
 # Link object file and create executable.
 $(BUILD_PATH)% : $(BUILD_PATH)%.o
-	LD_LIBRARY_PATH=$(LIBRARY_PATH) $(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
 all : debug optimized openmp retail extreme simd default vector
 

@@ -12,7 +12,9 @@ SOLUTION_NAME=Acceler8-Alexander_Solovets
 
 SOURCE=src/$(NAME).c
 
-# 'debug' is default target
+# 'doc' is default target
+dev: debug doc
+
 debug : CFLAGS = -ggdb -mssse3 -DDEBUG
 debug : $(BUILD_PATH)_dbg
 

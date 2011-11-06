@@ -8,7 +8,8 @@ BUILD_DIR=out
 BUILD_PATH=$(BUILD_DIR)/$(NAME)
 DIST_NAME=acceler8
 DIST_ARCH=$(DIST_NAME).tgz
-SOLUTION_NAME=Acceler8-Alexander_Solovets
+SOLUTION_NAME=acceler8-Alexander_Solovets
+SOLUTION_ARCH=${SOLUTION_NAME}.tgz
 
 SOURCE=src/$(NAME).c
 
@@ -64,7 +65,7 @@ dist-copy: dist
 	ssh $(REMOTE_HOST) 'tar zxf $(DIST_ARCH) && rm $(DIST_ARCH)'
 
 solution: doc
-	$(TAR) --transform 's,^,${SOLUTION_NAME}/,S' -zcf ${SOLUTION_NAME}.tgz \
+	tar --transform 's,^,${SOLUTION_NAME}/,S' -zcf ${SOLUTION_ARCH} \
 		Makefile \
 		src/msp.c \
 		doc/out/report.html

@@ -61,7 +61,7 @@ dist:
 	git archive --prefix=$(DIST_NAME)/ HEAD | gzip > $(DIST_ARCH)
 
 dist-copy: dist
-	scp $(DIST_ARCH) $(REMOTE_HOST):~mbait
+	scp $(DIST_ARCH) $(REMOTE_HOST):~$(USER)
 	ssh $(REMOTE_HOST) 'tar zxf $(DIST_ARCH) && rm $(DIST_ARCH)'
 
 solution: doc

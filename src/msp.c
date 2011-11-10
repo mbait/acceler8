@@ -28,7 +28,6 @@ struct ans_s {
 int mat[MAX_N + 1][MAX_N];
 
 struct ans_s ans;
-struct ans_s ttans[THREAD_NUM];
 
 size_t nr, nc;
 int seed, a, b, m;
@@ -80,19 +79,18 @@ void solve(void)
 {
 	int i;
 
-#ifdef _OPENMP
-	for (i = 0; i < THREAD_NUM; ++i)
-		ttans[i].sum = -1;
-#else
-	ans.sum = -1;
-#endif
-
 	gen();
+	ans.sum = -1;
 
 	#pragma omp parallel if(nr > 1)
 	{
 		int j, k;
 		size_t tid;
+#ifdef _OPENMP
+		struct ans_s tans;
+
+		tans.sum = -1;
+#endif
 
 		#pragma omp for nowait schedule(dynamic, 20)
 		for (i = 1; i <= nr; ++i) {
@@ -121,6 +119,7 @@ void solve(void)
 					}
 				}
 #ifdef _OPENMP
+				/*
 				tid = omp_get_thread_num();
 
 				if (max > ttans[tid].sum) {
@@ -129,6 +128,14 @@ void solve(void)
 					ttans[tid].c0 = max_l;
 					ttans[tid].r1 = j - 1;
 					ttans[tid].c1 = max_r;
+				}
+				*/
+				if (max > tans.sum) {
+					tans.sum = max;
+					tans.r0 = i - 1;
+					tans.c0 = max_l;
+					tans.r1 = j - 1;
+					tans.c1 = max_r;
 				}
 #else
 				if (max > ans.sum) {
@@ -141,22 +148,20 @@ void solve(void)
 #endif
 			}
 		}
-	}
 
 #ifdef _OPENMP
-	nr = 0;
-
-	for (i = 1; i < THREAD_NUM; ++i) {
-		if (ttans[i].sum > ttans[nr].sum)
-			nr = i;
-	}
-
-	ans.sum = ttans[nr].sum;
-	ans.r0 = ttans[nr].r0;
-	ans.c0 = ttans[nr].c0;
-	ans.r1 = ttans[nr].r1;
-	ans.c1 = ttans[nr].c1;
+#pragma omp critical(ans)
+		{
+			if (tans.sum > ans.sum) {
+				ans.sum = tans.sum;
+				ans.r0 = tans.r0;
+				ans.c0 = tans.c0;
+				ans.r1 = tans.r1;
+				ans.c1 = tans.c1;
+			}
+		}
 #endif
+	}
 }
 
 int main(int argc, char **argv)

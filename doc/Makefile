@@ -9,6 +9,7 @@ all: $(REPORT_HTML)
 $(REPORT_HTML): $(SOURCE)
 	test -d $(OUT_DIR) || mkdir $(OUT_DIR)
 	asciidoc -a lang=ru -a tabsize=4 -o $@ $<
+	sed -i $@ -e 's/\(class="title"\)/\1 style="text-align:inherit"/'
 
 $(REPORT_TEX) : $(SOURCE)
 	asciidoc -a lang=ru --unsafe --backend=latex $<

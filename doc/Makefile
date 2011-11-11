@@ -10,7 +10,7 @@ all: $(REPORT_HTML)
 $(REPORT_HTML): $(SOURCE)
 	$(MAKE) -C img
 	test -d ${IMG_DIR} || mkdir -p ${IMG_DIR}
-	mv img/*.png ${IMG_DIR}
+	cp img/*.png ${IMG_DIR}
 	asciidoc -a lang=ru -a tabsize=4 -o $@ $<
 	sed -i $@ -e 's/\(class="title"\)/\1 style="text-align:inherit"/'
 

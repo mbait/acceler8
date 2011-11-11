@@ -85,7 +85,6 @@ void solve(void)
 	#pragma omp parallel if(nr > 1)
 	{
 		int j, k;
-		size_t tid;
 #ifdef _OPENMP
 		struct ans_s tans;
 

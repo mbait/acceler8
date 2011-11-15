@@ -9,9 +9,9 @@ BUILD_PATH=$(BUILD_DIR)/$(NAME)
 DIST_NAME=acceler8
 DIST_ARCH=$(DIST_NAME).tgz
 SOLUTION_NAME=acceler8-Alexander_Solovets
-SOLUTION_ARCH=${SOLUTION_NAME}.tgz
 
 SOURCE=src/$(NAME).c
+SUBDIRS = doc
 
 # 'doc' is default target
 dev: debug doc
@@ -54,7 +54,8 @@ all-mtl : CC = /opt/gcc/4.5.1/bin/gcc
 all-mtl : LIBRARY_PATH = /opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib
 all-mtl : all
 
-clean: doc-clean
+clean:
+	$(MAKE) -C ${SUBDIRS} clean
 	$(RM) $(BUILD_DIR)/*
 
 dist:
@@ -65,10 +66,13 @@ dist-copy: dist
 	ssh $(REMOTE_HOST) 'tar zxf $(DIST_ARCH) && rm $(DIST_ARCH)'
 
 solution: doc
-	tar --transform 's,^,${SOLUTION_NAME}/,S' -zcf ${SOLUTION_ARCH} \
-		Makefile \
-		src/msp.c \
-		doc/out/report.html
+	$(RM) -r ${SOLUTION_NAME}
+	mkdir ${SOLUTION_NAME}
+	ln -s ${PWD}/src ${SOLUTION_NAME}
+	ln -s ${PWD}/doc/out ${SOLUTION_NAME}/doc
+	ln -s ${PWD}/Makefile.dist ${SOLUTION_NAME}/Makefile
+	ln -s ${PWD}/README ${SOLUTION_NAME}
+	tar hzcf ${SOLUTION_NAME}.tgz ${SOLUTION_NAME}
 
 batch: all-mtl
 	$(RM) -r ${PID_FILE}
@@ -82,9 +86,6 @@ batch: all-mtl
 
 doc:
 	$(MAKE) -C doc
-
-doc-clean:
-	$(MAKE) -C doc clean
 
 
 .SUFFIXES :

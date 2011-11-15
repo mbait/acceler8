@@ -5,6 +5,8 @@ IMG_DIR=${OUT_DIR}/img
 REPORT=$(OUT_DIR)/$(NAME)
 REPORT_HTML=$(REPORT).html
 
+SUBDIRS = img
+
 all: $(REPORT_HTML)
 
 $(REPORT_HTML): $(SOURCE)
@@ -18,6 +20,7 @@ $(REPORT_TEX) : $(SOURCE)
 	asciidoc -a lang=ru --unsafe --backend=latex $<
 
 clean:
+	$(MAKE) -C ${SUBDIRS} clean
 	$(RM) -r out
 
 .PHONY: clean

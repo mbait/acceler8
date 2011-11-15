@@ -16,13 +16,13 @@ SUBDIRS = doc
 # 'doc' is default target
 dev: debug doc
 
-debug : CFLAGS = -ggdb -mssse3 -DDEBUG
+debug : CFLAGS = -ggdb -mssse3 -ftree-vectorizer-verbose=2 -DDEBUG
 debug : $(BUILD_PATH)_dbg
 
 optimized : CFLAGS = -O2
 optimized : $(BUILD_PATH)_opt
 
-simd : CFLAGS = -mssse3
+simd : CFLAGS = -mssse3 -ftree-vectorizer-verbose=2
 simd : $(BUILD_PATH)_sse
 
 openmp : CFLAGS = -fopenmp
@@ -31,10 +31,10 @@ openmp : $(BUILD_PATH)_omp
 retail : CFLAGS = -fopenmp -O2
 retail : $(BUILD_PATH)_rtl
 
-extreme : CFLAGS = -fopenmp -O3 -mssse3
+extreme : CFLAGS = -fopenmp -O3 -mssse3 -ftree-vectorizer-verbose=2
 extreme : $(BUILD_PATH)_xtm
 
-vector : CFLAGS = -fopenmp -O2 -mssse3
+vector : CFLAGS = -fopenmp -O2 -mssse3 -ftree-vectorizer-verbose=2
 vector : $(BUILD_PATH)_vec
 
 default : $(BUILD_PATH)_nop

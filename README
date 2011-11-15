@@ -1,32 +1,30 @@
-MSP solution for the Intel Acceler8 2011 contest
-================================================
+Работа для конкурса Intel Acceler8
+==================================
 
-BUILDING
---------
-The solution can be easily built using `make` command. There are several
-targets for building, among which there are only two interesting.  The first
-is 'retail' which actually is the one you need to run against the test cases.
-Another one is 'optimized' which is pretty similar to 'retail' but has no any
-parallelization inside. Thus if you are going to test my solution just run
-`make retail` and then use created `out/msp_rtl`.
+АВТОРЫ
+------
+Команда 'GNU is Not Linux' в составе:
+	* Соловец Александр (mbait)
 
-Full list of build targets:
+КОМПИЛЯЦИЯ
+----------
+Для успешной компиляции требуется компилятор GCC, поддерживающий интерфейс
+'OpenMP' версии >= 2.5. Сборка может осуществляться как при помощи системы
+`GNU make`, так и через непосредственный запуск компилятора.
 
-* 'rtl': paralleled and optimized with `-O2`
-* 'vec': vectorized and optimized with `-O2`
-* 'xtm': vectorized and optimized with `-O3`
-* 'omp': paralleled but not optimized
-* 'sse': vectorized single-threaded
-* 'dbg': single-threaded with debug symbols
+В первом случае нужно перейти в директорию, содержащую Makefile и выполнить
+`make default`. В случае успеха, в директории 'out' будет находиться исполняемый
+файл 'msp'. Этот файл должен быть использован для тестирования на альтернативной
+машине. Для тестирования в *MTL* нужно использовать файл, полученный после
+запуска `make mtl`.
 
-RUNNING
--------
-According to the contest rules the program takes two command-line arguments:
-input file name and output file name. If there is not enough arguments the
-program will exit with the status code "1".
+Для компиляции напрямую нужно запустить GCC, указав флаги '-fopenmp -O2'. В
+качестве исходных файлов нужно указать 'src/msp.c'. Если все пути настроены
+правильно, то выполним команду `gcc -fopenmp -O2 -o msp src/msp.c`, получим
+исполняемый файл решения.
 
-UTILITIES
----------
-The distribution archive includes some utils for test automation and
-perfomance analysis. Also there is a script generating report, it requires
-`gnuplot'.
+ЗАПУСК
+------
+В соответствии с правилами конкурса, программа принимает на вход два параметра:
+входной и выходной имена файлов. Если параметров не хватает, программа
+завершиться с кодом ошибки '1'.

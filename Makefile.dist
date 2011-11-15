@@ -1,0 +1,26 @@
+SHELL = /bin/sh
+
+NAME = msp
+BINDIR = out
+SOURCES = src/msp.c
+BIN_MSP = ${BINDIR}/${NAME}
+BIN_MSP_MTL = ${BINDIR}/${NAME}_mtl
+TARGETS = ${BIN_MSP} ${BIN_MSP_MTL}
+
+CFLAGS = -fopenmp -O2
+
+all : default mtl
+
+${BIN_MSP_MTL} : CC = /opt/gcc/4.5.1/bin/gcc
+${BIN_MSP_MTL} : LIBRARY_PATH = /opt/mpc/lib:/opt/mpfr/lib/:/opt/gmp/lib
+
+default: ${BIN_MSP}
+
+mtl : ${BIN_MSP_MTL}
+
+${TARGETS} : ${SOURCES}
+	mkdir -p ${BINDIR}
+	LD_LIBRARY_PATH=${LD_LIBRARY_PATH} $(CC) $(CFLAGS) -o $@ $<
+
+clean :
+	$(RM) -r ${BINDIR}

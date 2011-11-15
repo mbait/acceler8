@@ -1,8 +1,8 @@
 use strict;
 use warnings;
 
-my $term = "pngcairo size 800,400 font 'terminus,9' rounded";
-my $line_style = "pt 5 ps 0.5 lt 1 lw 1.5";
+my $term = "pngcairo size 800,400 font 'terminus,9'";
+my $line_style = "pt 5 ps 0.7 lt 1 lw 1";
 my @line_colors = qw(ff0033 0099ff 66cc66 9966ff 666600 ff66ff);
 
 my $dir = $ARGV[0];
@@ -15,7 +15,7 @@ die "no data" unless @src;
 print "set grid y\n";
 print "set log xy\n";
 print "set term $term\n";
-print "set key l under\n";
+print "set key under\n";
 print "set style increment user\n";
 print "set style line $_ lc rgb '#$line_colors[$_-1]' $line_style\n" for 1..6;
 print "plot ", join(', ',

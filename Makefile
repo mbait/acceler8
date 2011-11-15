@@ -73,6 +73,7 @@ solution: doc
 	ln -s ${PWD}/Makefile.dist ${SOLUTION_NAME}/Makefile
 	ln -s ${PWD}/README ${SOLUTION_NAME}
 	tar hzcf ${SOLUTION_NAME}.tgz ${SOLUTION_NAME}
+	rm -r ${SOLUTION_NAME}
 
 batch: all-mtl
 	$(RM) -r ${PID_FILE}

@@ -31,15 +31,14 @@ struct ans_s ans;
 
 size_t nr, nc;
 int seed, a, b, m;
-int sum;
 
 inline void gen(void)
 {
 	int i, j;
 	int mean, rem;
-	int m_size = nr * nc;
 
-	sum = 0;
+	long long sum = 0;
+	size_t m_size = nr * nc;
 
 	for (i = 1; i <= nr; ++i) {
 		for (j = 0; j < nc; ++j) {
@@ -53,10 +52,9 @@ inline void gen(void)
 
 	/* This chunk is taken from the official jury code. */
 	///////////////////////////////////////////////////////////////////////////
-	mean = sum / m_size;
-	rem = sum - mean * m_size;
-	mean += (rem * 2 > m_size) ? (1) : (0);
-	mean -= (rem * 2 < -m_size) ? (1) : (0);
+    mean = (int) (sum / (long long) m_size); /* updated line */
+    rem = (int) (sum % (long long) m_size); /* updated line */
+    mean += (rem * 2 > (signed) m_size) ? (1) : (0); /* updated line */
 	///////////////////////////////////////////////////////////////////////////
 
 	for (i = 1; i <= nr; ++i) {

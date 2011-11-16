@@ -28,7 +28,7 @@ simd : $(BUILD_PATH)_sse
 openmp : CFLAGS = -fopenmp
 openmp : $(BUILD_PATH)_omp
 
-retail : CFLAGS = -fopenmp -O2
+retail : CFLAGS = -fopenmp -O2 -march=native -mtune=native
 retail : $(BUILD_PATH)_rtl
 
 extreme : CFLAGS = -fopenmp -O3 -mssse3 -ftree-vectorizer-verbose=2

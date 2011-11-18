@@ -31,7 +31,8 @@ close $fh or die $!;
 
 print "set grid y\n";
 #print "set log xy\n";
-print "set style data hist\n";
+#print "set style data hist\n";
+print "set boxwidth 0.25\n";
 print "set style fill solid border -1\n";
 print "set term $term\n";
 print "set key l under\n";
@@ -40,4 +41,4 @@ print "set style increment user\n";
 print "set yr [0.5:]\n";
 print "set ytics format '%gx'\n";
 print "set style line $_ lc rgb '#$line_colors[$_-1]' $line_style\n" for 1..6;
-print "plot '$fname' u 2:xtic(1) notitle\n";
+print "plot '$fname' u 2:xtic(1) w boxes notitle\n";

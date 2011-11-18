@@ -89,7 +89,7 @@ void solve(void)
 		tans.sum = -1;
 #endif
 
-		#pragma omp for nowait schedule(dynamic, 10)
+		#pragma omp for nowait schedule(dynamic, 20)
 		for (i = 1; i <= nr; ++i) {
 			for (j = i; j <= nr; ++j) {
 				int cur;
